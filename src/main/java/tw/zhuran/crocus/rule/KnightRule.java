@@ -6,7 +6,10 @@ import tw.zhuran.crocus.domain.Position;
 
 public class KnightRule implements PieceRule {
     @Override
-    public boolean legal(Piece piece, Position target) {
-        return Positions.md(piece.getPosition(), target) == 3;
+    public boolean legal(Piece piece, Position to) {
+        Position from = piece.getPosition();
+        return Positions.md(from, to) == 3 &&
+                (Positions.xd(from, to) == 1 ||
+                Positions.yd(from, to) == 1);
     }
 }
