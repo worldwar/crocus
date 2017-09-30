@@ -5,6 +5,12 @@ public class Action {
     private Position target;
     private ActionType type;
 
+    public Action(Piece piece, Position target, ActionType type) {
+        this.piece = piece;
+        this.target = target;
+        this.type = type;
+    }
+
     public Piece getPiece() {
         return piece;
     }

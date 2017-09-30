@@ -6,6 +6,13 @@ public class Piece {
     private Position position;
     private Force force;
 
+    public Piece(int id, Kind kind, Position position, Force force) {
+        this.id = id;
+        this.kind = kind;
+        this.position = position;
+        this.force = force;
+    }
+
     public int getId() {
         return id;
     }
@@ -37,5 +44,9 @@ public class Piece {
 
     public void setForce(Force force) {
         this.force = force;
+    }
+
+    public Piece duplicate() {
+        return new Piece(id, kind, position, force);
     }
 }
