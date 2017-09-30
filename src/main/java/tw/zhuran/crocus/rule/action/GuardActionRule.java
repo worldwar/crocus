@@ -14,6 +14,6 @@ public class GuardActionRule implements ActionRule {
         Position to = action.getTarget();
         return Positions.xd(piece.getPosition(), to) == 1 &&
                 Positions.yd(piece.getPosition(), to) == 1 &&
-                Positions.inForceArea(to, piece.getForce());
+                Positions.inKingArea(to, piece.getForce());
     }
 }

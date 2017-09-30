@@ -49,4 +49,12 @@ public class Piece {
     public Piece duplicate() {
         return new Piece(id, kind, position, force);
     }
+
+    public boolean red() {
+        return force == Force.RED;
+    }
+
+    public boolean black() {
+        return !red();
+    }
 }

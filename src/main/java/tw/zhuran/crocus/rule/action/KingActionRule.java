@@ -10,7 +10,7 @@ public class KingActionRule implements ActionRule {
         Position to = action.getTarget();
         Piece piece = action.getPiece();
         Position from = piece.getPosition();
-        return Positions.inKingArea(from, piece.getForce()) &&
+        return Positions.inKingArea(to, piece.getForce()) &&
                 Positions.md(from, to) == 1;
 
     }

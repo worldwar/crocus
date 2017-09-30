@@ -10,7 +10,7 @@ public class Position {
     }
 
     public boolean xin(int a, int b) {
-        if (b > a) {
+        if (b < a) {
             int t = a;
             a = b;
             b = t;
@@ -19,7 +19,7 @@ public class Position {
     }
 
     public boolean yin(int a, int b) {
-        if (b > a) {
+        if (b < a) {
             int t = a;
             a = b;
             b = t;

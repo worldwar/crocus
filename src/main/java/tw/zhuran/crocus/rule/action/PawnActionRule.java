@@ -1,10 +1,7 @@
 package tw.zhuran.crocus.rule.action;
 
 import tw.zhuran.crocus.Positions;
-import tw.zhuran.crocus.domain.Action;
-import tw.zhuran.crocus.domain.Board;
-import tw.zhuran.crocus.domain.Piece;
-import tw.zhuran.crocus.domain.Position;
+import tw.zhuran.crocus.domain.*;
 
 public class PawnActionRule implements ActionRule {
 
@@ -15,7 +12,7 @@ public class PawnActionRule implements ActionRule {
         Position from = piece.getPosition();
 
         return Positions.md(from, to) == 1 &&
-                to.y - from.y >= 0 &&
+                ((piece.red() && to.y >= from.y) || (piece.black() && to.y <= from.y)) &&
                 (!Positions.inForceArea(from, piece.getForce()) || to.x == from.x);
     }
 }
