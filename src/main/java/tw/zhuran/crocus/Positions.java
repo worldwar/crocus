@@ -64,4 +64,20 @@ public class Positions {
     public static Position bishopObstacle(Position from, Position to) {
         return new Position((from.x + to.x) / 2, (from.y + to.y) / 2);
     }
+
+    public static List<Position> row(int y) {
+        return range(new Position(1, y), new Position(9, y));
+    }
+
+    public static List<Position> row(Position position) {
+        return row(position.y);
+    }
+
+    public static List<Position> column(int x) {
+        return range(new Position(x, 1), new Position(x, 10));
+    }
+
+    public static List<Position> column(Position position) {
+        return column(position.x);
+    }
 }

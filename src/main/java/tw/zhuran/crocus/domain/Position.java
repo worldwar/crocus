@@ -26,4 +26,40 @@ public class Position {
         }
         return y >= a && y <= b;
     }
+
+    public Position move(int deltaX, int deltaY) {
+        return new Position(x + deltaX, y + deltaY);
+    }
+
+    public boolean legal() {
+        return x >= 1 &&
+                x <= 9 &&
+                y >= 1 &&
+                y <= 9;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        Position position = (Position) o;
+
+        if (x != position.x)
+            return false;
+        return y == position.y;
+    }
+
+    public boolean notEquals(Object o) {
+        return !equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        return result;
+    }
 }
