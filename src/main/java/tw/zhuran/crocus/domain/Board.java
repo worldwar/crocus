@@ -185,4 +185,9 @@ public class Board {
         makeEmpty(piece.getPosition());
         place(piece, position);
     }
+
+    public Action makeAction(Piece piece, Position position) {
+        ActionType actionType = actionType(position);
+        return new Action(piece, position, actionType);
+    }
 }
