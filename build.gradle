@@ -7,6 +7,8 @@ repositories {
 
 dependencies {
     compile 'com.google.guava:guava:20.0'
+    compile 'io.netty:netty-all:4.1.16.Final'
+    compile 'org.reflections:reflections:0.9.11'
 
     testCompile 'junit:junit:4.12'
 }
