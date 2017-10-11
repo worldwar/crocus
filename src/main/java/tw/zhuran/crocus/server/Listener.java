@@ -7,11 +7,20 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import tw.zhuran.crocus.server.handler.PacketHandler;
 
 public class Listener {
     private NioEventLoopGroup bossGroup = new NioEventLoopGroup();
     private NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+    private PacketHandler packetHandler;
+    private LengthFieldBasedFrameDecoder decoder;
+
+    public Listener(PacketHandler packetHandler) {
+        this.packetHandler = packetHandler;
+        decoder = new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4);
+    }
 
     public ChannelFuture listen(int port) throws InterruptedException {
         ServerBootstrap server = new ServerBootstrap()
@@ -19,7 +28,7 @@ public class Listener {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new PacketHandler());
+                        ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4)).addLast(new PacketHandler(packetHandler.getGameContext()));
                     }
                 })
                 .group(bossGroup, workerGroup)

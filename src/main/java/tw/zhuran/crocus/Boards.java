@@ -1,5 +1,6 @@
 package tw.zhuran.crocus;
 
+import tw.zhuran.crocus.domain.Force;
 import tw.zhuran.crocus.domain.Kind;
 import tw.zhuran.crocus.domain.Piece;
 import tw.zhuran.crocus.plan.*;
@@ -18,6 +19,12 @@ public class Boards {
     static EnumMap<Kind, ActionRule> rules = new EnumMap<Kind, ActionRule>(Kind.class);
 
     static EnumMap<Kind, Plan> plans = new EnumMap<Kind, Plan>(Kind.class);
+
+    static String[] RED_SYMBOLS = new String[]{"將", "車", "馬", "炮", "象", "士", "兵"};
+
+    static String[] BLACK_SYMBOLS = new String[]{"帥", "車", "馬", "炮", "相", "士", "卒"};
+
+    static String EMPTY_SYMBOLS = "·";
 
     static {
         rules.put(Kind.KING, new KingActionRule());
@@ -53,5 +60,17 @@ public class Boards {
         rules.add(new CheckedActionRule());
         rules.add(new KingFaceRule());
         return rules;
+    }
+
+    public static String symbol(Piece p) {
+        if (p == null) {
+            return EMPTY_SYMBOLS;
+        }
+        Kind kind = p.getKind();
+        if (p.getForce() == Force.RED) {
+            return RED_SYMBOLS[kind.ordinal()];
+        } else {
+            return BLACK_SYMBOLS[kind.ordinal()];
+        }
     }
 }

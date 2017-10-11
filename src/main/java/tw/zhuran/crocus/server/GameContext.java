@@ -13,9 +13,15 @@ public class GameContext {
 
     private Hub hub;
 
+    public GameContext() {
+        this.game = new Game();
+        this.hub = new Hub();
+    }
+
     public void play(Action action) {
         boolean done = game.play(action.getPiece(), action.getTarget());
         if (done) {
+            game.prinit();
             notifyAction(action);
         }
     }
@@ -27,15 +33,32 @@ public class GameContext {
     }
 
     private void notify(Packet packet, List<Connection> connections) {
-        for (Connection connection : connections) {
-            if (connection != null) {
-                notify(packet, connection);
-            }
-        }
+        connections.stream()
+                .filter(connection -> connection != null)
+                .forEach(connection -> notify(packet, connection));
     }
 
     private void notify(Packet packet, Connection connection) {
         byte[] bytes = packet.bytes();
         connection.send(bytes);
+    }
+
+    public Hub getHub() {
+        return hub;
+    }
+
+    public void add(Connection connection) {
+        hub.add(connection);
+    }
+
+    public void start() {
+        game.start();
+        game.prinit();
+    }
+
+    public void tryStart() {
+        if (hub.getRed() != null && hub.getBlack() != null) {
+            start();
+        }
     }
 }

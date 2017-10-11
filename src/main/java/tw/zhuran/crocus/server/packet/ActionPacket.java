@@ -1,8 +1,8 @@
 package tw.zhuran.crocus.server.packet;
 
-import tw.zhuran.crocus.domain.Force;
-import tw.zhuran.crocus.domain.Kind;
-import tw.zhuran.crocus.domain.Position;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import tw.zhuran.crocus.domain.*;
 import tw.zhuran.crocus.util.Meta;
 
 public class ActionPacket extends Packet {
@@ -10,6 +10,8 @@ public class ActionPacket extends Packet {
     private Force force;
 
     private Kind kind;
+
+    private ActionType actionType;
 
     private Position from;
 
@@ -19,10 +21,11 @@ public class ActionPacket extends Packet {
         this.type = PacketType.ACTION;
     }
 
-    public ActionPacket(Force force, Kind kind, Position from, Position to) {
-        this.type = PacketType.ACTION;
+    public ActionPacket(Force force, Kind kind, ActionType actionType, Position from, Position to) {
+        this();
         this.force = force;
         this.kind = kind;
+        this.actionType = actionType;
         this.from = from;
         this.to = to;
     }
@@ -43,6 +46,14 @@ public class ActionPacket extends Packet {
         this.kind = kind;
     }
 
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
+    }
+
     public Position getFrom() {
         return from;
     }
@@ -61,13 +72,21 @@ public class ActionPacket extends Packet {
 
     @Override
     public byte[] bytes() {
-        byte[] bytes = new byte[6];
-        bytes[0] = (byte)Meta.enumToInt(force);
-        bytes[1] = (byte)Meta.enumToInt(kind);
-        bytes[2] = (byte)from.x;
-        bytes[3] = (byte)from.y;
-        bytes[4] = (byte)to.x;
-        bytes[5] = (byte)to.x;
+        byte[] bytes = new byte[12];
+        ByteBuf byteBuf = Unpooled.copiedBuffer(bytes);
+        byteBuf.writeInt(8);
+        byteBuf.writeByte(Meta.enumToInt(type));
+        byteBuf.writeByte(Meta.enumToInt(force));
+        byteBuf.writeByte(Meta.enumToInt(kind));
+        byteBuf.writeByte(Meta.enumToInt(actionType));
+        byteBuf.writeByte(from.x);
+        byteBuf.writeByte(from.y);
+        byteBuf.writeByte(to.x);
+        byteBuf.writeByte(to.y);
         return bytes;
+    }
+
+    public Action action() {
+        return new Action(new Piece(0, kind, from, force), to, actionType);
     }
 }

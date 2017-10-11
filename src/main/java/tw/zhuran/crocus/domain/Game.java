@@ -19,6 +19,10 @@ public class Game {
     private Duration blackUsedTime;
     private TimePolicy timePolicy;
 
+    public Game() {
+        this(null);
+    }
+
     public Game(TimePolicy timePolicy) {
         board = new Board();
         state = GameState.NOT_STARTED;
@@ -100,5 +104,9 @@ public class Game {
 
     public void draw() {
         endGame(GameResult.DRAW);
+    }
+
+    public void prinit() {
+        System.out.println(board.print());
     }
 }

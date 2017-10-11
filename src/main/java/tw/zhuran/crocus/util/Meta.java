@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -54,9 +55,28 @@ public class Meta {
 
     public static Object call(Object object, String name, Object... parameters) {
         try {
-            Method method = object.getClass().getMethod(name);
+            Method method = method(object.getClass(), name);
             return method.invoke(object, parameters);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException e) {
+        }
+        return null;
+    }
+
+    public static Method method(Class c, String name) {
+        Method[] methods = c.getMethods();
+        return Arrays.stream(methods).filter(method -> method.getName().equals(name)).findFirst().orElse(null);
+    }
+
+    public static <T> T create(Class<T> c, Object... parameters) {
+        Constructor<?>[] constructors = c.getConstructors();
+        if (constructors.length > 0) {
+            Constructor<?> constructor = constructors[0];
+            try {
+                return (T) constructor.newInstance(parameters);
+            } catch (InstantiationException e) {
+            } catch (IllegalAccessException e) {
+            } catch (InvocationTargetException e) {
+            }
         }
         return null;
     }
@@ -71,5 +91,14 @@ public class Meta {
 
     public static int enumToInt(Enum object) {
         return object.ordinal() + 1;
+    }
+
+    public static Class[] classes(Object... parameters) {
+        Class[] classes = new Class[parameters.length];
+        int i = 0;
+        for (Object parameter : parameters) {
+            classes[i] = parameter.getClass();
+        }
+        return classes;
     }
 }

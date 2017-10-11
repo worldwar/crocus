@@ -4,38 +4,41 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import tw.zhuran.crocus.server.Connection;
-import tw.zhuran.crocus.server.Hub;
+import tw.zhuran.crocus.server.GameContext;
 import tw.zhuran.crocus.server.packet.Packet;
+import tw.zhuran.crocus.server.packet.Packets;
 import tw.zhuran.crocus.util.Meta;
 
 import java.util.List;
 
 public class PacketHandler extends ByteToMessageDecoder {
+    private GameContext gameContext;
 
-    private Hub hub;
+    public PacketHandler(GameContext gameContext) {
+        this.gameContext = gameContext;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        Connection connection = hub.newConnection(ctx);
-        hub.add(connection);
+        gameContext.add(new Connection(ctx));
+        gameContext.tryStart();
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        if (out.size() > 0) {
-            Packet packet = (Packet) out.get(0);
-            process(packet, ctx, in);
-        }
+        Packet packet = Packets.packet(in);
+        process(packet, ctx, in);
     }
 
     private void process(Packet packet, ChannelHandlerContext ctx, ByteBuf in) {
         Class type = Meta.type(Handler.class, packet.getType());
         if (type != null) {
-            try {
-                Object handler = type.newInstance();
-                Meta.call(handler, "handle", packet, ctx, in);
-            } catch (InstantiationException | IllegalAccessException e) {
-            }
+            Object handler = Meta.create(type, gameContext);
+            Meta.call(handler, "handle", packet, ctx, in);
         }
+    }
+
+    public GameContext getGameContext() {
+        return gameContext;
     }
 }

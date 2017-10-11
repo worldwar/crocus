@@ -190,4 +190,16 @@ public class Board {
         ActionType actionType = actionType(position);
         return new Action(piece, position, actionType);
     }
+
+    public String print() {
+        StringBuilder sb = new StringBuilder(128);
+
+        for (int y = 10; y >= 1; y--) {
+            for (int x = 9; x >= 1; x--) {
+                sb.append(Boards.symbol(positions[x][y]));
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }
