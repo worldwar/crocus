@@ -3,6 +3,7 @@ package tw.zhuran.crocus.server;
 import tw.zhuran.crocus.domain.Action;
 import tw.zhuran.crocus.domain.Force;
 import tw.zhuran.crocus.domain.Game;
+import tw.zhuran.crocus.domain.GameState;
 import tw.zhuran.crocus.server.packet.Packet;
 import tw.zhuran.crocus.server.packet.Packets;
 
@@ -24,7 +25,7 @@ public class GameContext {
             game.prinit();
             notifyAction(action);
         }
-    }
+     }
 
     private void notifyAction(Action action) {
         Packet packet = Packets.packet(action);
@@ -52,8 +53,10 @@ public class GameContext {
     }
 
     public void start() {
-        game.start();
-        game.prinit();
+        if (game.getState() == GameState.NOT_STARTED) {
+            game.start();
+            game.prinit();
+        }
     }
 
     public void tryStart() {

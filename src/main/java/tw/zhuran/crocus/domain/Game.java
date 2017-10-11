@@ -34,11 +34,13 @@ public class Game {
     }
 
     public void start() {
-        board.reset();
-        state = GameState.STARTED;
-        turn = Force.RED;
-        startDate = new Date();
-        turnStartDate = startDate;
+        if (state == GameState.NOT_STARTED) {
+            board.reset();
+            state = GameState.STARTED;
+            turn = Force.RED;
+            startDate = new Date();
+            turnStartDate = startDate;
+        }
     }
 
     public boolean play(Piece piece, Position position) {
@@ -108,5 +110,9 @@ public class Game {
 
     public void prinit() {
         System.out.println(board.print());
+    }
+
+    public GameState getState() {
+        return state;
     }
 }

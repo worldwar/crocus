@@ -20,9 +20,10 @@ public class GameServer {
 
     public void start() {
         try {
-            ChannelFuture future = listener.listen(1020);
+            ChannelFuture future = listener.listen(10200);
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
         }
     }
 }
+

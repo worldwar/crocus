@@ -4,10 +4,7 @@ import tw.zhuran.crocus.domain.Force;
 import tw.zhuran.crocus.domain.Kind;
 import tw.zhuran.crocus.domain.Piece;
 import tw.zhuran.crocus.plan.*;
-import tw.zhuran.crocus.rule.CheckedActionRule;
-import tw.zhuran.crocus.rule.KingFaceRule;
-import tw.zhuran.crocus.rule.PositionChangeRule;
-import tw.zhuran.crocus.rule.TargetForceFormationRule;
+import tw.zhuran.crocus.rule.*;
 import tw.zhuran.crocus.rule.action.*;
 
 import java.util.ArrayList;
@@ -54,6 +51,7 @@ public class Boards {
 
     public static List<ActionRule> rulesFor(Piece piece) {
         List<ActionRule> rules = new ArrayList<>();
+        rules.add(new ExistenceRule());
         rules.add(new PositionChangeRule());
         rules.add(new TargetForceFormationRule());
         rules.add(rule(piece.getKind()));

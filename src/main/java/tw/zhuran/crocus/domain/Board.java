@@ -202,4 +202,12 @@ public class Board {
         }
         return sb.toString();
     }
+
+    public boolean exists(Piece piece) {
+        if (!piece.getPosition().legal()) return false;
+        Piece realPiece = piece(piece.getPosition());
+        return realPiece != null &&
+                piece.getForce() == realPiece.getForce() &&
+                piece.getKind() == piece.getKind();
+    }
 }

@@ -35,7 +35,7 @@ public class Position {
         return x >= 1 &&
                 x <= 9 &&
                 y >= 1 &&
-                y <= 9;
+                y <= 10;
     }
 
     @Override
