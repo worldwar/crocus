@@ -1,5 +1,7 @@
 package tw.zhuran.crocus.server;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
 public class Connection {
@@ -11,6 +13,7 @@ public class Connection {
     }
 
     public void send(byte[] bytes) {
-        ctx.writeAndFlush(bytes);
+        ByteBuf byteBuf = Unpooled.copiedBuffer(bytes);
+        ctx.writeAndFlush(byteBuf);
     }
 }

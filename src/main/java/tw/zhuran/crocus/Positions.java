@@ -3,7 +3,6 @@ package tw.zhuran.crocus;
 import tw.zhuran.crocus.domain.Force;
 import tw.zhuran.crocus.domain.Position;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +42,6 @@ public class Positions {
     public static List<Position> range(Position from, Position to) {
         assert inline(from, to);
 
-        ArrayList<Position> positions = new ArrayList<Position>();
         if (from.x == to.x) {
             return Numbers.range(from.y, to.y).stream().map(y -> new Position(from.x, y)).collect(
                     Collectors.toList());

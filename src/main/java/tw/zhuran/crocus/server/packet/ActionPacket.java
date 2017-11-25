@@ -72,8 +72,7 @@ public class ActionPacket extends Packet {
 
     @Override
     public byte[] bytes() {
-        byte[] bytes = new byte[12];
-        ByteBuf byteBuf = Unpooled.copiedBuffer(bytes);
+        ByteBuf byteBuf = Unpooled.buffer(12);
         byteBuf.writeInt(8);
         byteBuf.writeByte(Meta.enumToInt(type));
         byteBuf.writeByte(Meta.enumToInt(force));
@@ -83,7 +82,7 @@ public class ActionPacket extends Packet {
         byteBuf.writeByte(from.y);
         byteBuf.writeByte(to.x);
         byteBuf.writeByte(to.y);
-        return bytes;
+        return byteBuf.array();
     }
 
     public Action action() {
