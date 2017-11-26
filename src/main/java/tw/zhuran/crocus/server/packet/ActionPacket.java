@@ -18,7 +18,7 @@ public class ActionPacket extends Packet {
     private Position to;
 
     public ActionPacket() {
-        this.type = PacketType.ACTION;
+        super(PacketType.ACTION);
     }
 
     public ActionPacket(Force force, Kind kind, ActionType actionType, Position from, Position to) {

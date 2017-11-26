@@ -1,16 +1,20 @@
 package tw.zhuran.crocus.server;
 
 import com.google.common.collect.Lists;
-import io.netty.channel.ChannelHandlerContext;
 import tw.zhuran.crocus.domain.Force;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Hub {
     private Connection red;
     private Connection black;
     private List<Connection> spectators = new ArrayList<>();
+    private ConcurrentMap<Long, Connection> connections = new ConcurrentHashMap<>();
+    private LinkedBlockingDeque<Connection> matching = new LinkedBlockingDeque<>();
 
     public Connection getRed() {
         return red;
@@ -57,17 +61,28 @@ public class Hub {
         return connections;
     }
 
-    public static Connection newConnection(ChannelHandlerContext ctx) {
-        return new Connection(ctx);
+    public Connection newConnection(Connection connection) {
+        connections.putIfAbsent(connection.getId(), connection);
+        try {
+
+        matching.put(connection);
+        } catch (Exception e) {
+
+        }
+        return connection;
     }
 
     public void add(Connection connection) {
-        if (red == null) {
-            red = connection;
-        } else if (black == null) {
-            black = connection;
-        } else {
-            spectators.add(connection);
-        }
+        connections.putIfAbsent(connection.getId(), connection);
+    }
+
+    public LinkedBlockingDeque<Connection> getMatching() {
+        return matching;
+    }
+
+    public void switchRedBlack() {
+        Connection c = red;
+        red = black;
+        black = c;
     }
 }

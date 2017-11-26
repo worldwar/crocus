@@ -4,24 +4,22 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import tw.zhuran.crocus.server.Connection;
-import tw.zhuran.crocus.server.GameContext;
+import tw.zhuran.crocus.server.GameServer;
 import tw.zhuran.crocus.server.packet.Packet;
 import tw.zhuran.crocus.server.packet.Packets;
-import tw.zhuran.crocus.util.Meta;
 
 import java.util.List;
 
 public class PacketHandler extends ByteToMessageDecoder {
-    private GameContext gameContext;
+    private GameServer gameServer;
 
-    public PacketHandler(GameContext gameContext) {
-        this.gameContext = gameContext;
+    public PacketHandler(GameServer gameServer) {
+        this.gameServer = gameServer;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        gameContext.add(new Connection(ctx));
-        gameContext.tryStart();
+        gameServer.newConnection(new Connection(ctx));
     }
 
     @Override
@@ -31,14 +29,12 @@ public class PacketHandler extends ByteToMessageDecoder {
     }
 
     private void process(Packet packet, ChannelHandlerContext ctx, ByteBuf in) {
-        Class type = Meta.type(Handler.class, packet.getType());
-        if (type != null) {
-            Object handler = Meta.create(type, gameContext);
-            Meta.call(handler, "handle", packet, ctx, in);
-        }
+
+        long id = ctx.hashCode();
+        gameServer.dispatch(id, packet);
     }
 
-    public GameContext getGameContext() {
-        return gameContext;
+    public PacketHandler duplicate() {
+        return new PacketHandler(gameServer);
     }
 }

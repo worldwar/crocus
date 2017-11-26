@@ -3,6 +3,9 @@ package tw.zhuran.crocus.server.packet;
 public abstract class Packet {
     protected PacketType type;
 
+    public Packet(PacketType type) {
+        this.type = type;
+    }
     public PacketType getType() {
         return type;
     }

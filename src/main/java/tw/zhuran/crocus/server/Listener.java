@@ -28,7 +28,7 @@ public class Listener {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
-                        ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4)).addLast(new PacketHandler(packetHandler.getGameContext()));
+                        ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024, 0, 4, 0, 4)).addLast(packetHandler.duplicate());
                     }
                 })
                 .group(bossGroup, workerGroup)

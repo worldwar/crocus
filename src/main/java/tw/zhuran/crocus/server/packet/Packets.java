@@ -2,6 +2,7 @@ package tw.zhuran.crocus.server.packet;
 
 import io.netty.buffer.ByteBuf;
 import tw.zhuran.crocus.domain.*;
+import tw.zhuran.crocus.server.packet.order.StartGamePacket;
 import tw.zhuran.crocus.util.Meta;
 
 public class Packets {
@@ -28,5 +29,10 @@ public class Packets {
 
     public static Packet packet(Action action) {
         return new ActionPacket(action.getPiece().getForce(), action.getPiece().getKind(), action.getType(), action.getPiece().getPosition(), action.getTarget());
+    }
+
+    public static Packet startGame(Force force) {
+        StartGamePacket startGamePacket = new StartGamePacket(force);
+        return startGamePacket;
     }
 }

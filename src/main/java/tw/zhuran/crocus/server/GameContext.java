@@ -6,17 +6,25 @@ import tw.zhuran.crocus.domain.Game;
 import tw.zhuran.crocus.domain.GameState;
 import tw.zhuran.crocus.server.packet.Packet;
 import tw.zhuran.crocus.server.packet.Packets;
+import tw.zhuran.crocus.util.Randoms;
 
 import java.util.List;
 
 public class GameContext {
+    private final long id;
+
     private Game game;
 
     private Hub hub;
 
-    public GameContext() {
+    public GameContext(long id, Connection red, Connection black) {
+        this.id = id;
         this.game = new Game();
         this.hub = new Hub();
+        hub.add(red);
+        hub.add(black);
+        hub.setRed(red);
+        hub.setBlack(black);
     }
 
     public void play(Action action) {
@@ -44,24 +52,40 @@ public class GameContext {
         connection.send(bytes);
     }
 
-    public Hub getHub() {
-        return hub;
-    }
-
     public void add(Connection connection) {
         hub.add(connection);
+    }
+
+    public void add(Connection... connections) {
+        for (Connection c : connections) {
+            hub.add(c);
+        }
     }
 
     public void start() {
         if (game.getState() == GameState.NOT_STARTED) {
             game.start();
+            if(Randoms.probability(0.5f)) {
+                hub.switchRedBlack();
+            }
+            notify(Packets.startGame(Force.RED), hub.getRed());
+            notify(Packets.startGame(Force.BLACK), hub.getBlack());
             game.prinit();
         }
     }
 
-    public void tryStart() {
-        if (hub.getRed() != null && hub.getBlack() != null) {
-            start();
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        GameContext that = (GameContext) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 }
