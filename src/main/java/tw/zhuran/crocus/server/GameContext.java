@@ -6,6 +6,8 @@ import tw.zhuran.crocus.domain.Game;
 import tw.zhuran.crocus.domain.GameState;
 import tw.zhuran.crocus.server.packet.Packet;
 import tw.zhuran.crocus.server.packet.Packets;
+import tw.zhuran.crocus.server.packet.order.EndGamePacket;
+import tw.zhuran.crocus.server.packet.order.OrderType;
 import tw.zhuran.crocus.util.Randoms;
 
 import java.util.List;
@@ -17,7 +19,10 @@ public class GameContext {
 
     private Hub hub;
 
-    public GameContext(long id, Connection red, Connection black) {
+    private GameServer gameServer;
+
+    public GameContext(GameServer gameServer, long id, Connection red, Connection black) {
+        this.gameServer = gameServer;
         this.id = id;
         this.game = new Game();
         this.hub = new Hub();
@@ -32,6 +37,11 @@ public class GameContext {
         if (done) {
             game.prinit();
             notifyAction(action);
+            if (game.getState() == GameState.ENDED) {
+                EndGamePacket packet = new EndGamePacket(OrderType.END_GAME, game.getResult(), game.getReason());
+                notify(packet, hub.all());
+                gameServer.close(this);
+            }
         }
      }
 
@@ -72,6 +82,18 @@ public class GameContext {
             notify(Packets.startGame(Force.BLACK), hub.getBlack());
             game.prinit();
         }
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public Connection red() {
+        return hub.getRed();
+    }
+
+    public Connection black() {
+        return hub.getBlack();
     }
 
     @Override

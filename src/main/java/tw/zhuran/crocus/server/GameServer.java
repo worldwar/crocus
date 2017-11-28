@@ -62,7 +62,7 @@ public class GameServer {
         GameContext context;
         while (true) {
             long id = Randoms.id();
-            context = new GameContext(id, first, second);
+            context = new GameContext(this, id, first, second);
             GameContext gameContext = contexts.putIfAbsent(id, context);
             if (gameContext == null) {
                 break;
@@ -71,7 +71,6 @@ public class GameServer {
         connectionContexts.putIfAbsent(first.getId(), context);
         connectionContexts.putIfAbsent(second.getId(), context);
         context.start();
-
     }
 
     public void dispatch(long id, Packet packet) {
@@ -82,6 +81,19 @@ public class GameServer {
                 Object handler = Meta.create(type, context);
                 Meta.call(handler, "handle", packet, null, null);
             }
+        }
+    }
+
+    public void close(GameContext gameContext) {
+        contexts.remove(gameContext.getId());
+        startMatching(gameContext.red());
+        startMatching(gameContext.black());
+    }
+
+    private void startMatching(Connection c) {
+        if (c != null) {
+            connectionContexts.remove(c.getId());
+            hub.addToMatching(c);
         }
     }
 }

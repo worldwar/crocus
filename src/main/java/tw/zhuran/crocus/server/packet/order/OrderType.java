@@ -1,5 +1,6 @@
 package tw.zhuran.crocus.server.packet.order;
 
 public enum OrderType {
-    START_GAME
+    START_GAME,
+    END_GAME
 }

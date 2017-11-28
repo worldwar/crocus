@@ -12,6 +12,7 @@ public class Game {
     private Board board;
     private GameState state;
     private GameResult result;
+    private GameEndReason reason;
     private Force turn;
     private Date startDate;
     private Date turnStartDate;
@@ -83,29 +84,34 @@ public class Game {
     private void settle() {
         boolean checkmated = board.checkmated(turn.opposed());
         if (checkmated) {
-            win(turn);
+            win(turn, GameEndReason.CHECKMATE);
         }
     }
 
-    private void win(Force force) {
+    private void win(Force force, GameEndReason reason) {
         if (force == Force.RED) {
-            endGame(GameResult.RED_WIN);
+            endGame(GameResult.RED_WIN, reason);
         } else {
-            endGame(GameResult.BLACK_WIN);
+            endGame(GameResult.BLACK_WIN, reason);
         }
     }
 
-    private void endGame(GameResult result) {
+    private void endGame(GameResult result, GameEndReason reason) {
         this.result = result;
         state = GameState.ENDED;
+        this.reason = reason;
     }
 
     public void resign(Force force) {
-        win(force.opposed());
+        win(force.opposed(), GameEndReason.RESIGN);
     }
 
-    public void draw() {
-        endGame(GameResult.DRAW);
+    public void draw(Force force) {
+        if (force == Force.RED) {
+            endGame(GameResult.DRAW, GameEndReason.RED_DRAW);
+        } else {
+            endGame(GameResult.DRAW, GameEndReason.BLACK_DRAW);
+        }
     }
 
     public void prinit() {
@@ -114,5 +120,13 @@ public class Game {
 
     public GameState getState() {
         return state;
+    }
+
+    public GameResult getResult() {
+        return result;
+    }
+
+    public GameEndReason getReason() {
+        return reason;
     }
 }
