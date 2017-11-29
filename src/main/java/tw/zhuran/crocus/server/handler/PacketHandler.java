@@ -23,13 +23,17 @@ public class PacketHandler extends ByteToMessageDecoder {
     }
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        gameServer.removeConnection(ctx.hashCode());
+    }
+
+    @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         Packet packet = Packets.packet(in);
         process(packet, ctx, in);
     }
 
     private void process(Packet packet, ChannelHandlerContext ctx, ByteBuf in) {
-
         long id = ctx.hashCode();
         gameServer.dispatch(id, packet);
     }

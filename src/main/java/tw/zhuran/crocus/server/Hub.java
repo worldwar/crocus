@@ -90,4 +90,20 @@ public class Hub {
             }
         }
     }
+
+    public void remove(long id) {
+        Connection c = connections.remove(id);
+        matching.remove(c);
+        spectators.remove(c);
+        if (red == c) {
+            red = null;
+        }
+        if (black == c) {
+            black = null;
+        }
+    }
+
+    public Connection get(long id) {
+        return connections.get(id);
+    }
 }

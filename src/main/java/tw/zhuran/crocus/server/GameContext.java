@@ -1,13 +1,8 @@
 package tw.zhuran.crocus.server;
 
-import tw.zhuran.crocus.domain.Action;
-import tw.zhuran.crocus.domain.Force;
-import tw.zhuran.crocus.domain.Game;
-import tw.zhuran.crocus.domain.GameState;
+import tw.zhuran.crocus.domain.*;
 import tw.zhuran.crocus.server.packet.Packet;
 import tw.zhuran.crocus.server.packet.Packets;
-import tw.zhuran.crocus.server.packet.order.EndGamePacket;
-import tw.zhuran.crocus.server.packet.order.OrderType;
 import tw.zhuran.crocus.util.Randoms;
 
 import java.util.List;
@@ -38,9 +33,7 @@ public class GameContext {
             game.prinit();
             notifyAction(action);
             if (game.getState() == GameState.ENDED) {
-                EndGamePacket packet = new EndGamePacket(OrderType.END_GAME, game.getResult(), game.getReason());
-                notify(packet, hub.all());
-                gameServer.close(this);
+                endGame(game.getResult(), game.getReason());
             }
         }
      }
@@ -109,5 +102,23 @@ public class GameContext {
     @Override
     public int hashCode() {
         return (int) (id ^ (id >>> 32));
+    }
+
+    public void remove(Connection connection) {
+        if (game.getState() == GameState.STARTED) {
+            if (connection == hub.getRed()) {
+                hub.remove(connection.getId());
+                endGame(GameResult.BLACK_WIN, GameEndReason.RUNAWAY);
+            } else if (connection == hub.getBlack()){
+                hub.remove(connection.getId());
+                endGame(GameResult.RED_WIN, GameEndReason.RUNAWAY);
+            }
+        }
+    }
+
+    private void endGame(GameResult result, GameEndReason reason) {
+        Packet packet = Packets.endGame(result, reason);
+        notify(packet, hub.all());
+        gameServer.close(this);
     }
 }

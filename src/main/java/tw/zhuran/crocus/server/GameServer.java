@@ -96,5 +96,14 @@ public class GameServer {
             hub.addToMatching(c);
         }
     }
+
+    public void removeConnection(long id) {
+        GameContext context = connectionContexts.remove(id);
+        if (context != null) {
+            Connection connection = hub.get(id);
+            context.remove(connection);
+        }
+        hub.remove(id);
+    }
 }
 
