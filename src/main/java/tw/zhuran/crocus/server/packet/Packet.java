@@ -1,6 +1,6 @@
 package tw.zhuran.crocus.server.packet;
 
-public abstract class Packet {
+public class Packet {
     protected PacketType type;
 
     public Packet(PacketType type) {
@@ -14,5 +14,7 @@ public abstract class Packet {
         this.type = type;
     }
 
-    public abstract byte[] bytes();
+    public byte[] bytes() {
+        return null;
+    }
 }
