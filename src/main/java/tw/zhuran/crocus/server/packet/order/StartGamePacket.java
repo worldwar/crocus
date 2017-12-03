@@ -23,4 +23,13 @@ public class StartGamePacket extends OrderPacket {
         byteBuf.writeByte(Meta.enumToInt(force));
         return byteBuf.array();
     }
+
+    public Force getForce() {
+        return force;
+    }
+
+    public StartGamePacket setForce(Force force) {
+        this.force = force;
+        return this;
+    }
 }

@@ -1,5 +1,6 @@
 package tw.zhuran.crocus.server.packet;
 
+import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import tw.zhuran.crocus.domain.*;
 import tw.zhuran.crocus.server.packet.order.EndGamePacket;
@@ -40,5 +41,13 @@ public class Packets {
 
     public static Packet endGame(GameResult result, GameEndReason reason) {
         return new EndGamePacket(OrderType.END_GAME, result, reason);
+    }
+
+    public static Packet packetFromJson(String text) {
+        Packet parse = JSON.parseObject(text, Packet.class);
+        if (parse.getType() == PacketType.ACTION) {
+            return JSON.parseObject(text, ActionPacket.class);
+        }
+        return null;
     }
 }

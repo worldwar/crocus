@@ -5,6 +5,7 @@ import tw.zhuran.crocus.server.handler.Handler;
 import tw.zhuran.crocus.server.handler.PacketHandler;
 import tw.zhuran.crocus.server.packet.Packet;
 import tw.zhuran.crocus.server.task.GameMatcher;
+import tw.zhuran.crocus.server.websocket.WebSocketListener;
 import tw.zhuran.crocus.util.Meta;
 import tw.zhuran.crocus.util.Randoms;
 
@@ -12,6 +13,7 @@ import java.util.concurrent.*;
 
 public class GameServer {
     private Listener listener;
+    private WebSocketListener webSocketListener;
     private PacketHandler handler;
 
     private ConcurrentMap<Long, GameContext> contexts;
@@ -29,6 +31,7 @@ public class GameServer {
     public GameServer() {
         handler = new PacketHandler(this);
         listener = new Listener(handler);
+        webSocketListener = new WebSocketListener(this);
         contexts = new ConcurrentHashMap<>();
         connectionContexts = new ConcurrentHashMap<>();
     }
@@ -36,8 +39,10 @@ public class GameServer {
     public void start() {
         try {
             ChannelFuture future = listener.listen(10200);
+            ChannelFuture webSocketFuture = webSocketListener.listen(10222);
             initTasks();
             future.channel().closeFuture().sync();
+            webSocketFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
         }
     }

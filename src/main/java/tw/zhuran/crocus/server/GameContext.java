@@ -51,8 +51,7 @@ public class GameContext {
     }
 
     private void notify(Packet packet, Connection connection) {
-        byte[] bytes = packet.bytes();
-        connection.send(bytes);
+        connection.send(packet);
     }
 
     public void add(Connection connection) {

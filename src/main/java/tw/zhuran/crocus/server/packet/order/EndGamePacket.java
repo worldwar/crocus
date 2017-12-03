@@ -26,4 +26,22 @@ public class EndGamePacket extends OrderPacket {
         byteBuf.writeByte(Meta.enumToInt(reason));
         return byteBuf.array();
     }
+
+    public GameResult getResult() {
+        return result;
+    }
+
+    public EndGamePacket setResult(GameResult result) {
+        this.result = result;
+        return this;
+    }
+
+    public GameEndReason getReason() {
+        return reason;
+    }
+
+    public EndGamePacket setReason(GameEndReason reason) {
+        this.reason = reason;
+        return this;
+    }
 }
