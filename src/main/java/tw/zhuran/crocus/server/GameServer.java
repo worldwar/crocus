@@ -22,7 +22,7 @@ public class GameServer {
 
     private Hub hub = new Hub();
 
-    private ExecutorService executor = Executors.newScheduledThreadPool(8);
+    private ScheduledExecutorService executor = Executors.newScheduledThreadPool(8);
 
     public static void main(String[] args) {
         new GameServer().start();
@@ -57,6 +57,10 @@ public class GameServer {
 
     public void submit(Callable callable) {
         executor.submit(callable);
+    }
+
+    public void delay(Callable callable) {
+        executor.schedule(callable, 2, TimeUnit.SECONDS);
     }
 
     public LinkedBlockingDeque<Connection> matching() {

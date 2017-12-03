@@ -15,10 +15,12 @@ public class GameMatcher implements Callable<Void> {
     @Override
     public Void call() throws Exception {
         LinkedBlockingDeque<Connection> matching = gameServer.matching();
-        Connection first = matching.take();
-        Connection second = matching.take();
-        gameServer.newGame(first, second);
-        gameServer.submit(this);
+        if (matching.size() >= 2) {
+            Connection first = matching.take();
+            Connection second = matching.take();
+            gameServer.newGame(first, second);
+        }
+        gameServer.delay(this);
         return null;
     }
 }
