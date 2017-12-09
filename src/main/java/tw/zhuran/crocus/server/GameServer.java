@@ -4,6 +4,7 @@ import io.netty.channel.ChannelFuture;
 import tw.zhuran.crocus.server.handler.Handler;
 import tw.zhuran.crocus.server.handler.PacketHandler;
 import tw.zhuran.crocus.server.packet.Packet;
+import tw.zhuran.crocus.server.packet.order.OrderPacket;
 import tw.zhuran.crocus.server.task.GameMatcher;
 import tw.zhuran.crocus.server.websocket.WebSocketListener;
 import tw.zhuran.crocus.util.Meta;
@@ -90,13 +91,40 @@ public class GameServer {
                 Object handler = Meta.create(type, context);
                 Meta.call(handler, "handle", packet, null, null);
             }
+        } else {
+            Connection connection = hub.get(id);
+            if (packet instanceof OrderPacket) {
+                OrderPacket op = (OrderPacket) packet;
+                switch (op.getOrderType()) {
+                    case READY:
+                        ready(connection);
+                        break;
+                    case UNREADY:
+                        unready(connection);
+                        break;
+                }
+            }
         }
     }
 
+    private void ready(Connection connection) {
+        hub.addToMatching(connection);
+    }
+
+    private void unready(Connection connection) {
+        hub.leaveMatching(connection);
+    }
+
     public void close(GameContext gameContext) {
+        exitGameContext(gameContext.red());
+        exitGameContext(gameContext.black());
         contexts.remove(gameContext.getId());
-        startMatching(gameContext.red());
-        startMatching(gameContext.black());
+    }
+
+    private void exitGameContext(Connection c) {
+        if (c != null) {
+            connectionContexts.remove(c.getId());
+        }
     }
 
     private void startMatching(Connection c) {

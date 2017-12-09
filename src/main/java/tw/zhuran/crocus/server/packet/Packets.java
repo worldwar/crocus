@@ -3,9 +3,7 @@ package tw.zhuran.crocus.server.packet;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import tw.zhuran.crocus.domain.*;
-import tw.zhuran.crocus.server.packet.order.EndGamePacket;
-import tw.zhuran.crocus.server.packet.order.OrderType;
-import tw.zhuran.crocus.server.packet.order.StartGamePacket;
+import tw.zhuran.crocus.server.packet.order.*;
 import tw.zhuran.crocus.util.Meta;
 
 public class Packets {
@@ -26,6 +24,20 @@ public class Packets {
                 Position from = new Position(content[3], content[4]);
                 Position to = new Position(content[5], content[6]);
                 return new ActionPacket(force, kind, actionType, from, to);
+            case ORDER:
+                return parseOrder(buf);
+        }
+        return null;
+    }
+
+    private static Packet parseOrder(ByteBuf buf) {
+        int ot = buf.readByte();
+        OrderType orderType = Meta.enumFromInt(OrderType.class, ot);
+        switch (orderType) {
+            case READY:
+                return new ReadyPacket();
+            case UNREADY:
+                return new UnreadyPacket();
         }
         return null;
     }

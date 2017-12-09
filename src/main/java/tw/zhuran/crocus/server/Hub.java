@@ -63,7 +63,6 @@ public class Hub {
 
     public Connection newConnection(Connection connection) {
         connections.putIfAbsent(connection.getId(), connection);
-        addToMatching(connection);
         return connection;
     }
 
@@ -87,6 +86,15 @@ public class Hub {
                 matching.put(c);
             } catch (Exception e) {
 
+            }
+        }
+    }
+
+    public void leaveMatching(Connection c) {
+        if (matching.contains(c)) {
+            try {
+                matching.remove(c);
+            } catch (Exception e) {
             }
         }
     }
